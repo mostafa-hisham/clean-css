@@ -1,6 +1,7 @@
 var vows = require('vows');
 
 var optimizerContext = require('../../test-helper').optimizerContext;
+var optimizers = require('../../../lib/optimizer/level-1/value-optimizers');
 
 vows.describe('level 1 optimizations')
   .addBatch(
@@ -48,6 +49,30 @@ vows.describe('level 1 optimizations')
       'pseudo classes': [
         'div  :first-child{color:red}',
         'div :first-child{color:red}'
+      ],
+      'pseudo classes - nth-child(1) to first-child': [
+        '.block:nth-child(1){color:red}',
+        '.block:first-child{color:red}'
+      ],
+      'pseudo classes - nth-of-type(1) to first-of-type': [
+        '.block:nth-of-type(1){color:red}',
+        '.block:first-of-type{color:red}'
+      ],
+      'pseudo classes - nth-of-type(even) to nth-of-type(2n)': [
+        '.block:nth-of-type(even){color:red}',
+        '.block:nth-of-type(2n){color:red}'
+      ],
+      'pseudo classes - nth-child(even) to nth-child(2n)': [
+        '.block:nth-child(even){color:red}',
+        '.block:nth-child(2n){color:red}'
+      ],
+      'pseudo classes - nth-of-type(2n+1) to nth-of-type(odd)': [
+        '.block:nth-of-type(2n+1){color:red}',
+        '.block:nth-of-type(odd){color:red}'
+      ],
+      'pseudo classes - nth-child(2n+1) to nth-child(odd)': [
+        '.block:nth-child(2n+1){color:red}',
+        '.block:nth-child(odd){color:red}'
       ],
       'tabs': [
         'div\t\t{color:red}',
@@ -396,6 +421,30 @@ vows.describe('level 1 optimizations')
       'transparent non-black hsla': [
         'a{color:rgba(240,0,0,0)}',
         'a{color:rgba(240,0,0,0)}'
+      ],
+      'space-separated rgb': [
+        'a{color:rgba(240 0 0)}',
+        'a{color:rgba(240 0 0)}'
+      ],
+      'space-separated rgba': [
+        'a{color:rgba(240 0 0 / .1)}',
+        'a{color:rgba(240 0 0 / .1)}'
+      ],
+      'space-separated hsl': [
+        'a{color:hsla(240 0% 0%)}',
+        'a{color:hsla(240 0% 0%)}'
+      ],
+      'space-separated hsla': [
+        'a{color:hsla(240 0% 0% / 10%)}',
+        'a{color:hsla(240 0% 0% / 10%)}'
+      ],
+      'space-separated hsl with deg': [
+        'a{color:hsla(240deg 0% 0%)}',
+        'a{color:hsla(240deg 0% 0%)}'
+      ],
+      'space-separated hsla with deg': [
+        'a{color:hsla(240deg 0% 0% / .1)}',
+        'a{color:hsla(240deg 0% 0% / .1)}'
       ],
       'partial hex to name': [
         'a{color:#f00000}',
@@ -1554,5 +1603,49 @@ vows.describe('level 1 optimizations')
           '.block > .another-block{animation-duration:500ms;font:"Arial";margin:010px}'
       ]
     }, { level: { 1: { all: false } } })
+  )
+  .addBatch(
+    optimizerContext('variable optimizations without optimizers given', {
+      'removes whitespace': [
+        '.block{--custom: #ff0000}',
+        '.block{--custom:#ff0000}'
+      ]
+    })
+  )
+  .addBatch(
+    optimizerContext('variable optimizations with optimizers given', {
+      'optimizes colors': [
+        '.block{--custom: #ff0000}',
+        '.block{--custom:red}'
+      ],
+      'optimizes precision': [
+        '.block{--custom: 0.12125111111rem}',
+        '.block{--custom:0.121rem}'
+      ]
+    }, {level: { 1: { roundingPrecision: 3, variableValueOptimizers: [optimizers.color, optimizers.precision] } } })
+  )
+  .addBatch(
+    optimizerContext('variable optimizations with optimizers given as strings', {
+      'optimizes colors': [
+        '.block{--custom: #ff0000}',
+        '.block{--custom:red}'
+      ],
+      'optimizes precision': [
+        '.block{--custom: 0.12125111111rem}',
+        '.block{--custom:0.121rem}'
+      ]
+    }, {level: { 1: { roundingPrecision: 3, variableValueOptimizers: ['color', 'precision'] } } })
+  )
+  .addBatch(
+    optimizerContext('variable optimizations with invalid optimizers', {
+      'optimizes colors': [
+        '.block{--custom: #ff0000}',
+        '.block{--custom:#ff0000}'
+      ],
+      'optimizes precision': [
+        '.block{--custom: 0.12125111111rem}',
+        '.block{--custom:0.12125111111rem}'
+      ]
+    }, {level: { 1: { variableValueOptimizers: ['boom!'] } } })
   )
   .export(module);

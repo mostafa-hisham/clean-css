@@ -941,6 +941,14 @@ vows.describe('integration tests')
       'do not round ems': [
         'div{font-size:1.505em}',
         'div{font-size:1.505em}'
+      ],
+      'leave "fractions" in urls alone': [
+        '.block{background:url(\'foo.10.png\')}',
+        '.block{background:url(\'foo.10.png\')}'
+      ],
+      'leave "fractions" in image sets alone': [
+        '.block{background:image-set(url(\'foo.10.png\') 1x)}',
+        '.block{background:image-set(url(\'foo.10.png\') 1x)}'
       ]
     })
   )
@@ -1549,6 +1557,10 @@ vows.describe('integration tests')
       'remove font family quotation': [
         'a{font-family:"Helvetica",\'Arial\'}',
         'a{font-family:Helvetica,Arial}'
+      ],
+      'keeps quoting for generic families' : [
+        '.block{font-family:"cursive","default","emoji","fangsong","fantasy","inherit","initial","math","monospace","revert","revert-layer","sans-serif","serif","system-ui","ui-monospace","ui-rounded","ui-sans-serif","ui-serif","unset"}',
+        '.block{font-family:"cursive","default","emoji","fangsong","fantasy","inherit","initial","math","monospace","revert","revert-layer","sans-serif","serif","system-ui","ui-monospace","ui-rounded","ui-sans-serif","ui-serif","unset"}'
       ],
       'do not remove font family double quotation if space inside': [
         'a{font-family:"Courier New"}',
@@ -2404,8 +2416,8 @@ vows.describe('integration tests')
         'a:focus,b{color:red}'
       ],
       'rules with well-supported pseudo classes should be merged #2': [
-        'a:nth-of-type(1){color:red}b{color:red}',
-        'a:nth-of-type(1),b{color:red}'
+        'a:nth-of-type(5){color:red}b{color:red}',
+        'a:nth-of-type(5),b{color:red}'
       ],
       'rules with well-supported pseudo classes should be merged #3': [
         'a:first-of-type{color:red}b{color:red}',
