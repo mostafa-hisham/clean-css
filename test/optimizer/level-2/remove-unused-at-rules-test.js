@@ -28,7 +28,7 @@ vows.describe('remove unused at rules')
         '@counter-style test{system:fixed;symbols:url(one.png) url(two.png);suffix:" "}.block{list-style:test!important}',
         '@counter-style test{system:fixed;symbols:url(one.png) url(two.png);suffix:" "}.block{list-style:test!important}'
       ]
-    }, { level: { 2: { removeUnusedAtRules: true } } })
+    }, { level: { 2: { removeUnusedAtRules: true, removeUnusedFonts: true } } })
   )
   .addBatch(
     optimizerContext('@font-face', {
@@ -88,7 +88,7 @@ vows.describe('remove unused at rules')
         '@font-face{font-family:test;font-weight:normal}@font-face{font-family:test;font-weight:bold}',
         ''
       ]
-    }, { level: { 2: { removeUnusedAtRules: true } } })
+    }, { level: { 2: { removeUnusedAtRules: true ,removeUnusedFonts: true } } })
   )
   .addBatch(
     optimizerContext('@keyframes', {
@@ -132,7 +132,7 @@ vows.describe('remove unused at rules')
         '@keyframes test{0%{opacity:0}100%{opacity:1}}.block{animation:1s ease-in test!important}',
         '@keyframes test{0%{opacity:0}100%{opacity:1}}.block{animation:1s ease-in test!important}'
       ]
-    }, { level: { 2: { removeUnusedAtRules: true } } })
+    }, { level: { 2: { removeUnusedAtRules: true,removeUnusedFonts: true } } })
   )
   .addBatch(
     optimizerContext('@namespace', {
@@ -160,6 +160,6 @@ vows.describe('remove unused at rules')
         '@namespace svg url(http://www.w3.org/2000/svg);@namespace xlink url(http://www.w3.org/2000/xlink);svg|.block{color:red}',
         '@namespace svg url(http://www.w3.org/2000/svg);svg|.block{color:red}'
       ]
-    }, { level: { 2: { removeUnusedAtRules: true } } })
+    }, { level: { 2: { removeUnusedAtRules: true,removeUnusedFonts: true } } })
   )
   .export(module);
